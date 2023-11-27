@@ -24,6 +24,10 @@ public class CategoryController extends HttpServlet {
                response.sendRedirect("views/add-category.jsp");
                break;
            case "edit":
+                int id = Integer.parseInt(request.getParameter("id"));
+                Category category = categoryService.findById(id);
+                request.setAttribute("category",category);
+                request.getRequestDispatcher("views/edit-category.jsp").forward(request,response);
                break;
            case "delete":
                break;
@@ -34,18 +38,18 @@ public class CategoryController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
-        String action = request.getParameter("action");
-        if(action == null){
-            // lấy dữ liệu
-            Category category = new Category();
-            category.setCategoryName(request.getParameter("categoryName"));
-            category.setCategoryStatus(Boolean.parseBoolean(request.getParameter("categoryStatus")));
-
-            if(categoryService.saveOrUpdate(category)){
-                showList(request,response);
-            }
-            response.sendRedirect("views/add-category.jsp?err");
+        Category category = new Category();
+        category.setCategoryName(request.getParameter("categoryName"));
+        category.setCategoryStatus(Boolean.parseBoolean(request.getParameter("categoryStatus")));
+        System.out.println(request.getParameter("id"));
+        if(request.getParameter("id") != null){
+            category.setCategoryId(Integer.parseInt(request.getParameter("id")));
         }
+        // lấy dữ liệu
+        if(categoryService.saveOrUpdate(category)){
+            showList(request,response);
+        }
+        response.sendRedirect("views/add-category.jsp?err");
     }
 
     public void showList(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException{

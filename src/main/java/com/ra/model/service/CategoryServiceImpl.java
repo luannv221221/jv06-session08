@@ -18,8 +18,8 @@ public class CategoryServiceImpl implements CategoryService{
         return categoryDAO.saveOrUpdate(category);
     }
     @Override
-    public Category findById(Integer integer) {
-        return null;
+    public Category findById(Integer id) {
+        return categoryDAO.findById(id);
     }
 
     @Override

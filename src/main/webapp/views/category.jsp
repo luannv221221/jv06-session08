@@ -29,6 +29,9 @@
                 <td>${item.categoryId}</td>
                 <td>${item.categoryName}</td>
                 <td>${item.categoryStatus ? "Active" : "Nghĩ đã"}</td>
+                <td>
+                    <a href="danh-muc?action=edit&id=${item.categoryId}">Edit</a>
+                </td>
             </tr>
         </c:forEach>
     </table>

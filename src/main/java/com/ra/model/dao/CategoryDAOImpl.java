@@ -37,14 +37,24 @@ public class CategoryDAOImpl implements CategoryDAO {
     @Override
     public boolean saveOrUpdate(Category category) {
         Connection connection = null;
+        int check;
         try {
             connection = ConnectionDB.openConnection();
-            String sql = "INSERT INTO category(name,status) VALUES (?,?)";
-            PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setString(1, category.getCategoryName());
-            statement.setBoolean(2, category.getCategoryStatus());
+            if(category.getCategoryId() == 0){
+                String sql = "INSERT INTO category(name,status) VALUES (?,?)";
+                PreparedStatement statement = connection.prepareStatement(sql);
+                statement.setString(1, category.getCategoryName());
+                statement.setBoolean(2, category.getCategoryStatus());
+                check = statement.executeUpdate();
+            } else {
+                String sql = "UPDATE category SET name = ?,status=? WHERE id = ?";
+                PreparedStatement statement = connection.prepareStatement(sql);
+                statement.setString(1, category.getCategoryName());
+                statement.setBoolean(2, category.getCategoryStatus());
+                statement.setInt(3, category.getCategoryId());
+                check = statement.executeUpdate();
+            }
 
-            int check = statement.executeUpdate();
             if (check > 0)
                 return true;
         } catch (SQLException e) {
@@ -56,8 +66,27 @@ public class CategoryDAOImpl implements CategoryDAO {
     }
 
     @Override
-    public Category findById(Integer integer) {
-        return null;
+    public Category findById(Integer id) {
+        Connection connection = null;
+        Category category = new Category();
+
+        connection = ConnectionDB.openConnection();
+        try {
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM category WHERE id = ?");
+            statement.setInt(1,id);
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()){
+                category.setCategoryId(rs.getInt("id"));
+                category.setCategoryName(rs.getString("name"));
+                category.setCategoryStatus(rs.getBoolean("status"));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            ConnectionDB.closeConnection(connection);
+        }
+
+        return category;
     }
 
     @Override
