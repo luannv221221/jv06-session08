@@ -1,5 +1,6 @@
 package com.ra.model.dao;
 
+import java.sql.SQLException;
 import java.util.List;
 
 public interface IGenericDAO <T,ID>{
